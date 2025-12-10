@@ -1,0 +1,6 @@
+Form
+
+Name, Email, phone, Address, Occupation
+
+
+DashBoard-> Total saved, total target, Active goals and food value 

@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Custom Shrikhand font class */
+.font-shrikhand {
+  font-family: "Shrikhand", cursive;
+}
