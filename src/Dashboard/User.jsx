@@ -273,7 +273,7 @@ export default function User() {
                 <div className="flex justify-between items-start mb-8 gap-4">
                     <div>
                       <p className="text-3xl text-gray-600 font-medium">
-                          {getGreeting()}, {user.firstname || user.name || user.fullName || 'User'}👋🏽
+                          {getGreeting()}, {user?.firstname || user.name || user.fullName || 'User'}👋🏽
                         </p>
                         
                         <p className="text-slate-400 text-lg mt-1">
