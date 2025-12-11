@@ -29,6 +29,8 @@ export default function User() {
         amount: '',
         paymentMethod: 'Card'
     });
+    console.log('user', user);
+    
 
     const API_BASE = 'https://foodvault-36sx.onrender.com/api/v1/savings/:id';
 
