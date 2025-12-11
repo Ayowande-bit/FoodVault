@@ -30,7 +30,7 @@ export default function User() {
         paymentMethod: 'Card'
     });
 
-    const API_BASE = 'https://foodvault-36sx.onrender.com/api/v1/savings/user';
+    const API_BASE = 'https://foodvault-36sx.onrender.com/api/v1/savings/:id';
 
     // Load data on mount
     useEffect(() => {

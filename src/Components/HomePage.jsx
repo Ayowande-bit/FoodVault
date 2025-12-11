@@ -191,7 +191,7 @@ export default function HomePage() {
           <p className="text-lg sm:text-xl mb-8 text-emerald-100">
             Take charge of your food security alongside hundreds of others
           </p>
-          <a href="/dashboard">
+          <a href="/log">
             <button className="px-10 py-5 bg-white text-emerald-600 rounded-xl font-bold text-lg hover:bg-emerald-50 transition-all shadow-xl hover:shadow-2xl inline-flex items-center gap-2">
               Create Your Savings Plan
               <ArrowRight className="w-5 h-5" />

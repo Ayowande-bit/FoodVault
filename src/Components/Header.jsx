@@ -7,7 +7,7 @@ const navLinks = [
   { name: 'Home', page: 'Home', icon: Home },
   { name: 'How It Works', page: 'HowItWorks', icon: Info },
   { name: 'About Us', page: 'AboutUs', icon: UserCircle},
-  { name: "Admin", page: 'Admin', icon: UserCircle},
+  { name: "Sign In", page: 'SignIn', icon: User},
   { name: 'Register', page: 'Register', icon: User},
   
 
@@ -19,7 +19,7 @@ function createPageUrl(pageName) {
     Home: '/',
     HowItWorks: '/hero', // ✅ Link How It Works to Hero page
     AboutUs: '/about',
-    Admin: '/admin',
+    SignIn: '/sign',
     Register: '/log',
  
     

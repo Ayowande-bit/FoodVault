@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, User, Lock, Eye, EyeOff, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Mail, User, Lock, Eye, EyeOff, Loader2, CheckCircle, ArrowLeft, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Cartoon from '../assets/cartoon.png';
 
@@ -15,6 +15,7 @@ export default function Log() {
     firstname: '',
     lastname: '',
     password: '',
+    phone: '',
     agreeToTerms: false
   });
 
@@ -43,7 +44,7 @@ export default function Log() {
     setErrorMessage("");
 
     // Validation
-    if (!formData.firstname || !formData.lastname || !formData.email || !formData.password) {
+    if (!formData.firstname || !formData.lastname || !formData.email || !formData.password || formData.phone) {
       alert('Please fill in all fields');
       return;
     }
@@ -70,9 +71,10 @@ export default function Log() {
         },
         body: JSON.stringify({
           email: formData.email,
-          firstname: formData.firstname,
-          lastname: formData.lastname,
-          password: formData.password
+          firstName: formData.firstname,
+          lastName: formData.lastname,
+          password: formData.password,
+          phone: formData.phone
         })
       });
 
@@ -179,6 +181,23 @@ export default function Log() {
                 name="email"
                 placeholder="Email"
                 value={formData.email}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+              />
+            </div>
+
+            {/* Phone */}
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                <Phone className="w-5 h-5" />
+              </div>
+              <input
+                type="string"
+                min={11}
+                name="phone"
+                placeholder="Phone Number"
+                value={formData.phone}
                 onChange={handleInputChange}
                 disabled={isLoading}
                 className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
