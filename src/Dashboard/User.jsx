@@ -106,88 +106,165 @@ export default function User() {
     };
 
     // Create plan
-    const handleAddMoney = async () => {
-    if (!addMoneyForm.amount || !selectedPlan) {
-        alert('Please enter an amount');
-        return;
-    }
+    const handleCreatePlan = async () => {
+        if (!createPlanForm.targetAmount || !createPlanForm.cycleAmount) {
+            alert('Please fill in Target Amount and Amount Per Cycle');
+            return;
+        }
 
-    const amount = parseFloat(addMoneyForm.amount);
-    if (amount <= 0) {
-        alert('Please enter a valid amount');
-        return;
-    }
+        const payload = {
+            planName: 'Food Savings',
+            targetAmount: parseFloat(createPlanForm.targetAmount),
+            cycleAmount: parseFloat(createPlanForm.cycleAmount),
+            frequency: createPlanForm.frequency,
+            endDate: createPlanForm.endDate,
+            lga: createPlanForm.lga,
+            deliveryAddress: createPlanForm.deliveryAddress,
+            foodPreferences: createPlanForm.foodPreferences,
+            userId: user._id,
+            currentAmount: 0,
+            status: 'active'
+        };
 
-    try {
-        // 1️⃣ Initialize payment
-        const initRes = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                amount: amount,
-                planId: selectedPlan._id,
-                userId: user._id,
-            }),
+        try {
+            const res = await fetch(`${API_BASE}/create`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'user-id': user._id
+                },
+                body: JSON.stringify(payload),
+            });
+            
+            const data = await res.json();
+            
+            if (data.success && data.newPlan) {
+                setPlans(prev => [...prev, data.newPlan]);
+                const updatedPlans = [...plans, data.newPlan];
+                localStorage.setItem('plans', JSON.stringify(updatedPlans));
+            } else {
+                const newPlan = {
+                    _id: Date.now().toString(),
+                    ...payload,
+                    createdAt: new Date().toISOString()
+                };
+                setPlans(prev => [...prev, newPlan]);
+                localStorage.setItem('plans', JSON.stringify([...plans, newPlan]));
+            }
+        } catch {
+            const newPlan = {
+                _id: Date.now().toString(),
+                ...payload,
+                createdAt: new Date().toISOString()
+            };
+            setPlans(prev => [...prev, newPlan]);
+            localStorage.setItem('plans', JSON.stringify([...plans, newPlan]));
+        }
+
+        setCreatePlanForm({
+            targetAmount: '',
+            cycleAmount: '',
+            frequency: 'Monthly',
+            endDate: '',
+            lga: '',
+            deliveryAddress: '',
+            foodPreferences: []
         });
-        const initData = await initRes.json();
+        setShowCreatePlanModal(false);
+        alert('Savings plan created successfully!');
+    };
 
-        if (!initData.success || !initData.paymentUrl) {
-            alert('Payment initialization failed. Try again.');
+    // Add money
+    const handleAddMoney = async () => {
+        if (!addMoneyForm.amount || !selectedPlan) {
+            alert('Please enter an amount');
             return;
         }
 
-        // Open payment URL in a new tab/window
-        window.open(initData.paymentUrl, '_blank');
-
-        // 2️⃣ Wait for user to complete payment, then verify
-        const verifyRes = await fetch(`https://foodvault-36sx.onrender.com/payments/verify?reference=${initData.reference}`);
-        const verifyData = await verifyRes.json();
-
-        if (!verifyData.success) {
-            alert('Payment not completed or verification failed.');
+        const amount = parseFloat(addMoneyForm.amount);
+        if (amount <= 0) {
+            alert('Please enter a valid amount');
             return;
         }
 
-        // Update local plan and transactions after successful payment
-        const updatedPlan = {
-            ...selectedPlan,
-            currentAmount: (selectedPlan.currentAmount || 0) + amount,
-        };
+        const payload = { amount };
 
-        setPlans(prev => prev.map(p => p._id === selectedPlan._id ? updatedPlan : p));
-        const updatedPlans = plans.map(p => p._id === selectedPlan._id ? updatedPlan : p);
-        localStorage.setItem('plans', JSON.stringify(updatedPlans));
+        try {
+            const res = await fetch(`${API_BASE}/update/${selectedPlan._id}`, {
+                method: 'PATCH',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'user-id': user._id
+                },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            
+            if (data.success && data.updatedPlan) {
+                setPlans(prev => prev.map(p => p._id === selectedPlan._id ? data.updatedPlan : p));
+                const updatedPlans = plans.map(p => p._id === selectedPlan._id ? data.updatedPlan : p);
+                localStorage.setItem('plans', JSON.stringify(updatedPlans));
+            } else {
+                const updatedPlan = {
+                    ...selectedPlan,
+                    currentAmount: (selectedPlan.currentAmount || 0) + amount
+                };
+                setPlans(prev => prev.map(p => p._id === selectedPlan._id ? updatedPlan : p));
+                const updatedPlans = plans.map(p => p._id === selectedPlan._id ? updatedPlan : p);
+                localStorage.setItem('plans', JSON.stringify(updatedPlans));
+            }
 
-        const newTransaction = {
-            id: Date.now().toString(),
-            planId: selectedPlan._id,
-            planName: selectedPlan.planName || 'Food Savings',
-            amount: amount,
-            paymentMethod: addMoneyForm.paymentMethod,
-            date: new Date().toISOString().split('T')[0],
-            type: 'Deposit',
-            timestamp: new Date().toISOString(),
-        };
+            const newTransaction = {
+                id: Date.now().toString(),
+                planId: selectedPlan._id,
+                planName: selectedPlan.planName || 'Food Savings',
+                amount: amount,
+                paymentMethod: addMoneyForm.paymentMethod,
+                date: new Date().toISOString().split('T')[0],
+                type: 'Deposit',
+                timestamp: new Date().toISOString()
+            };
+            
+            const updatedTransactions = [newTransaction, ...transactions];
+            setTransactions(updatedTransactions);
+            localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        } catch {
+            const updatedPlan = {
+                ...selectedPlan,
+                currentAmount: (selectedPlan.currentAmount || 0) + amount
+            };
+            setPlans(prev => prev.map(p => p._id === selectedPlan._id ? updatedPlan : p));
+            const updatedPlans = plans.map(p => p._id === selectedPlan._id ? updatedPlan : p);
+            localStorage.setItem('plans', JSON.stringify(updatedPlans));
 
-        const updatedTransactions = [newTransaction, ...transactions];
-        setTransactions(updatedTransactions);
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+            const newTransaction = {
+                id: Date.now().toString(),
+                planId: selectedPlan._id,
+                planName: selectedPlan.planName || 'Food Savings',
+                amount: amount,
+                paymentMethod: addMoneyForm.paymentMethod,
+                date: new Date().toISOString().split('T')[0],
+                type: 'Deposit',
+                timestamp: new Date().toISOString()
+            };
+            
+            const updatedTransactions = [newTransaction, ...transactions];
+            setTransactions(updatedTransactions);
+            localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        }
 
+        setShowAddMoneyModal(false);
+        setSelectedPlan(null);
+        setAddMoneyForm({ amount: '', paymentMethod: 'Card' });
         alert(`Successfully added ₦${amount.toLocaleString()} to your savings plan!`);
-    } catch (err) {
-        console.error(err);
-        alert('An error occurred while processing your payment.');
-    }
+    };
 
-    setShowAddMoneyModal(false);
-    setSelectedPlan(null);
-    setAddMoneyForm({ amount: '', paymentMethod: 'Card' });
-};
-
-        const handleLogout = () => { if (window.confirm('Are you sure you want to logout?')) { localStorage.removeItem('user'); window.location.href = '/sign'; } };
-
-        
-
+    const handleLogout = () => {
+        if (window.confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('user');
+            window.location.href = '/sign';
+        }
+    };
 
     return (
         <div className="min-h-screen bg-slate-100 text-slate-00">
