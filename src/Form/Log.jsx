@@ -44,7 +44,7 @@ export default function Log() {
     setErrorMessage("");
 
     // Validation
-    if (!formData.firstname || !formData.lastname || !formData.email || !formData.password || formData.phone) {
+    if (!formData.firstname || !formData.lastname || !formData.email || !formData.password || !formData.phone) {
       alert('Please fill in all fields');
       return;
     }
