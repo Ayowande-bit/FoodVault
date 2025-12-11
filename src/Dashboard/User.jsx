@@ -29,8 +29,6 @@ export default function User() {
         amount: '',
         paymentMethod: 'Card'
     });
-    console.log('user', user);
-    
 
     const API_BASE = 'https://foodvault-36sx.onrender.com/api/v1/savings/:id';
 
@@ -275,7 +273,7 @@ export default function User() {
                 <div className="flex justify-between items-start mb-8 gap-4">
                     <div>
                       <p className="text-3xl text-gray-600 font-medium">
-                          {getGreeting()}, {user?.firstname || user.name || user?.fullName || ''}👋🏽
+                          {getGreeting()}, {user?.firstname || user.name || user?.fullName || 'User'}👋🏽
                         </p>
                         
                         <p className="text-slate-400 text-lg mt-1">
