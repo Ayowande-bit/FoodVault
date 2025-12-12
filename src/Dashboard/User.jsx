@@ -241,8 +241,20 @@ export default function User() {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-8 gap-4">
                     <div>
+                        {/* Debug: Check console for user object structure */}
+                        {console.log('Current User State:', user)}
                         <p className="text-3xl text-gray-600 font-medium">
-                            {getGreeting()}, {user?.firstName || user?.firstname || user?.name || user?.fullName || 'User'}👋🏽
+                            {getGreeting()}, {
+                                user?.firstName ||
+                                user?.firstname ||
+                                user?.name ||
+                                user?.fullName ||
+                                user?.user?.firstName ||
+                                user?.user?.firstname ||
+                                user?.user?.name ||
+                                user?.user?.fullName ||
+                                'User'
+                            }👋🏽
                         </p>
 
                         <p className="text-slate-400 text-lg mt-1">
