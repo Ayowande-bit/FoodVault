@@ -1,7 +1,8 @@
 // src/Dashboard/Admin.jsx
 import React, { useEffect, useState } from "react";
 
-const API_BASE = "https://foodvault-36sx.onrender.com";
+
+const API_BASE = import.meta.env.VITE_API_BASE
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);

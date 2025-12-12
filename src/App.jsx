@@ -11,7 +11,6 @@ import PaymentVerify from './Dashboard/PaymentVerify.jsx';
 import Market from './Dashboard/Market.jsx';
 import AdminDashboard from './Dashboard/Admin.jsx';
 
-
 function App() {
   const location = useLocation();
 

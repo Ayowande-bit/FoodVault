@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ShoppingBasket, Search, ArrowLeft, Plus, Check, Wallet, Filter, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = 'https://foodvault-36sx.onrender.com';
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 // Extensive Nigerian Market Data
 const NIGERIAN_MARKET_DATA = [

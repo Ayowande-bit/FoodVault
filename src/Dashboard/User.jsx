@@ -4,6 +4,7 @@ import {
     CreditCard, Smartphone, LogOut, Phone, MessageCircle, Mail, ShoppingBasket
 } from 'lucide-react';
 
+
 export default function User() {
     const [user, setUser] = useState(null);
     const [plans, setPlans] = useState([]);
@@ -16,13 +17,17 @@ export default function User() {
 
     // Form states
     const [createPlanForm, setCreatePlanForm] = useState({
+        title: '',
         targetAmount: '',
-        cycleAmount: '',
+        monthlyAmount: '',
+        weeklyAmount: '',
         frequency: 'Monthly',
-        endDate: '',
+        durationMonths: '',
+        autoDebit: false,
         lga: '',
         deliveryAddress: '',
-        foodPreferences: []
+        foodPreferences: [],
+        description: '',
     });
 
     const [addMoneyForm, setAddMoneyForm] = useState({
@@ -30,11 +35,14 @@ export default function User() {
         paymentMethod: 'Card'
     });
 
-    const API_BASE = 'https://foodvault-36sx.onrender.com/api/v1/savings/:id';
+    const API_BASE = `${import.meta.env.VITE_API_BASE}/api/v1/savings`;
+
 
     // Load data on mount
     useEffect(() => {
+
         const storedUserString = localStorage.getItem('user');
+
         if (!storedUserString) {
             window.location.href = '/sign';
             return;
@@ -45,33 +53,41 @@ export default function User() {
             setUser(storedUser);
 
             // Fetch plans
-            fetch(`${API_BASE}/plan`, {
+            fetch(`${API_BASE}/`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json', 'user-id': storedUser._id }
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${storedUser.tokens.accessToken}`,
+                    // 'user-id': storedUser._id 
+                }
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success && data.plans) {
-                        setPlans(data.plans);
-                        localStorage.setItem('plans', JSON.stringify(data.plans));
+
+                    if (data.success && data.data) {
+                        setPlans(data.data);
+                        localStorage.setItem('plans', JSON.stringify(data.data));
+
                     } else {
                         const localPlans = JSON.parse(localStorage.getItem('plans') || '[]');
                         setPlans(localPlans);
                     }
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.error("Failed to load plans", err);
                     const localPlans = JSON.parse(localStorage.getItem('plans') || '[]');
                     setPlans(localPlans);
                 });
 
             // Fetch transactions
-            fetch('https://foodvault-36sx.onrender.com/payments/transactions', {
+            fetch(`${import.meta.env.VITE_API_BASE}/api/v1/payments/transactions`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json', 'user-id': storedUser._id }
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${storedUser.tokens.accessToken}` }
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status && data.data) {
+
+                    if (data.success && data.data) {
                         setTransactions(data.data);
                         localStorage.setItem('transactions', JSON.stringify(data.data));
                     } else {
@@ -100,7 +116,9 @@ export default function User() {
     }
 
     // Calculations
-    const totalSaved = plans.reduce((acc, p) => acc + (p.currentAmount || 0), 0);
+    const totalSaved = transactions
+        .filter(item => item.status === "successful")
+        .reduce((sum, item) => sum + item.amount, 0);
     const totalTarget = plans.reduce((acc, p) => acc + (p.targetAmount || 0), 0);
     const foodValue = totalSaved * 0.9;
     const quickAmounts = [1000, 2000, 5000, 10000, 20000];
@@ -123,72 +141,107 @@ export default function User() {
     };
 
     // Create plan
+    // Create plan
     const handleCreatePlan = async () => {
-        if (!createPlanForm.targetAmount || !createPlanForm.cycleAmount) {
-            alert('Please fill in Target Amount and Amount Per Cycle');
+        const { title, targetAmount, monthlyAmount, weeklyAmount, durationMonths, frequency, autoDebit, lga, deliveryAddress, foodPreferences, description } = createPlanForm;
+
+        if (!title || !targetAmount || !durationMonths) {
+            alert('Please fill in all required fields');
             return;
         }
 
+        // Validate amount based on frequency
+        if (frequency === 'Monthly' && !monthlyAmount) {
+            alert('Please enter Monthly Amount');
+            return;
+        }
+        if (frequency === 'Weekly' && !weeklyAmount) {
+            alert('Please enter Weekly Amount');
+            return;
+        }
+
+        const duration = parseInt(durationMonths);
+        const target = parseFloat(targetAmount);
+
+        // Calculate effective monthly contribution for validation warning (client-side)
+        let projectedTotal = 0;
+        if (frequency === 'Monthly') {
+            projectedTotal = parseFloat(monthlyAmount) * duration;
+        } else {
+            // Approx 4 weeks * duration
+            projectedTotal = parseFloat(weeklyAmount) * 4 * duration;
+        }
+
+        if (duration < 3) {
+            alert('Minimum duration is 3 months');
+            return;
+        }
+
+        if (projectedTotal < target) {
+            alert(`${frequency} amount may be too low to reach target amount of ${target} in ${duration} months.`);
+            return;
+        }
+
+        // Construct payload matching backend expectations
         const payload = {
-            planName: 'Food Savings',
-            targetAmount: parseFloat(createPlanForm.targetAmount),
-            cycleAmount: parseFloat(createPlanForm.cycleAmount),
-            frequency: createPlanForm.frequency,
-            endDate: createPlanForm.endDate,
-            lga: createPlanForm.lga,
-            deliveryAddress: createPlanForm.deliveryAddress,
-            foodPreferences: createPlanForm.foodPreferences,
+            title,
+            description: description || `Savings for ${title}`,
+            targetAmount: target,
+            monthlyAmount: frequency === 'Monthly' ? parseFloat(monthlyAmount) : 50,
+            weeklyAmount: frequency === 'Weekly' ? parseFloat(weeklyAmount) : 100,
+            durationMonths: duration,
+            paymentType: "one-time",
+            recurrence: frequency.toLowerCase(),
+            autoDebit,
+            lga,
+            deliveryAddress,
+            foodPreferences,
             userId: user._id,
-            currentAmount: 0,
-            status: 'active'
         };
 
         try {
-            const res = await fetch(`${API_BASE}/create`, {
+            const res = await fetch(`${API_BASE}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': user._id
+                    Authorization: `Bearer ${user.tokens.accessToken}`,
                 },
                 body: JSON.stringify(payload),
             });
 
             const data = await res.json();
 
-            if (data.success && data.newPlan) {
-                setPlans(prev => [...prev, data.newPlan]);
-                const updatedPlans = [...plans, data.newPlan];
-                localStorage.setItem('plans', JSON.stringify(updatedPlans));
-            } else {
-                const newPlan = {
-                    _id: Date.now().toString(),
-                    ...payload,
-                    createdAt: new Date().toISOString()
-                };
-                setPlans(prev => [...prev, newPlan]);
-                localStorage.setItem('plans', JSON.stringify([...plans, newPlan]));
+            if (!data.success) {
+                alert(data.message || 'Failed to create plan');
+                return;
             }
-        } catch {
-            const newPlan = {
-                _id: Date.now().toString(),
-                ...payload,
-                createdAt: new Date().toISOString()
-            };
-            setPlans(prev => [...prev, newPlan]);
-            localStorage.setItem('plans', JSON.stringify([...plans, newPlan]));
-        }
 
-        setCreatePlanForm({
-            targetAmount: '',
-            cycleAmount: '',
-            frequency: 'Monthly',
-            endDate: '',
-            lga: '',
-            deliveryAddress: '',
-            foodPreferences: []
-        });
-        setShowCreatePlanModal(false);
-        alert('Savings plan created successfully!');
+            if (data.success && data.data) { // Backend returns 'data' key for new plan
+                setPlans(prev => [...prev, data.data]);
+                const updatedPlans = [...plans, data.data];
+                localStorage.setItem('plans', JSON.stringify(updatedPlans));
+                alert('Savings plan created successfully!');
+
+                // Reset form
+                setCreatePlanForm({
+                    title: '',
+                    targetAmount: '',
+                    monthlyAmount: '',
+                    weeklyAmount: '',
+                    frequency: 'Monthly',
+                    durationMonths: '',
+                    autoDebit: false,
+                    lga: '',
+                    deliveryAddress: '',
+                    foodPreferences: [],
+                    description: ''
+                });
+                setShowCreatePlanModal(false);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while creating the plan.');
+        }
     };
 
     // Add money
@@ -209,22 +262,21 @@ export default function User() {
             // Call initialize payment endpoint
             // Endpoint: POST /payments/initialize
             // Body: amount, email, planId
-            const res = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE}/api/v1/payments/initialize`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': user._id
+                    Authorization: `Bearer ${user.tokens.accessToken}`
                 },
                 body: JSON.stringify({
-                    email: user.email,
                     amount: amount,
-                    planId: selectedPlan._id // Include planId as required
+                    savingsPlanId: selectedPlan._id // Include planId as required
                 }),
             });
 
             const data = await res.json();
 
-            if (data.status && data.data && data.data.authorization_url) {
+            if (data.success && data.data && data.data.authorization_url) {
                 // Redirect to payment gateway
                 window.location.href = data.data.authorization_url;
             } else {
@@ -259,7 +311,7 @@ export default function User() {
                 <div className="flex justify-between items-start mb-8 gap-4">
                     <div>
                         {/* Debug: Check console for user object structure */}
-                        {console.log('Current User State:', user)}
+                        {/* {console.log('Current User State:', user)} */}
                         <p className="text-3xl text-gray-600 font-medium">
                             {getGreeting()}, {
                                 user?.firstName ||
@@ -406,7 +458,7 @@ export default function User() {
                             ) : (
                                 <div className="space-y-4">
                                     {plans.map((plan) => {
-                                        const progress = ((plan.currentAmount || 0) / (plan.targetAmount || 1)) * 100;
+                                        const progress = ((plan.currentBalance || 0) / (plan.targetAmount || 1)) * 100;
                                         const planTransactions = transactions.filter(t => t.planId === plan._id);
 
                                         return (
@@ -524,7 +576,7 @@ export default function User() {
                                                         {transaction.type} • {transaction.planName}
                                                     </p>
                                                     <p className="text-[11px] text-slate-400">
-                                                        {new Date(transaction.date).toLocaleDateString('en-GB')}
+                                                        {new Date(transaction.createdAt).toLocaleDateString('en-GB')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -629,6 +681,19 @@ export default function User() {
                         </div>
 
                         <div className="p-6 space-y-5">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-600 mb-2">
+                                    Plan Title
+                                </label>
+                                <input
+                                    type="text"
+                                    value={createPlanForm.title}
+                                    onChange={(e) => setCreatePlanForm({ ...createPlanForm, title: e.target.value })}
+                                    placeholder="e.g., Christmas Savings"
+                                    className="w-full px-4 py-2.5 rounded-lg text-slate-700 text-sm border"
+                                />
+                            </div>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-600 mb-2">
@@ -646,13 +711,23 @@ export default function User() {
                                     <label className="block  font-semibold text-slate-600 mb-2 text-sm">
                                         Amount per cycle (₦)
                                     </label>
-                                    <input
-                                        type="number"
-                                        value={createPlanForm.cycleAmount}
-                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, cycleAmount: e.target.value })}
-                                        placeholder="e.g., 5000"
-                                        className="w-full px-4 py-2.5  rounded-lg text-slate-700 text-sm border"
-                                    />
+                                    {createPlanForm.frequency === 'Monthly' ? (
+                                        <input
+                                            type="number"
+                                            value={createPlanForm.monthlyAmount}
+                                            onChange={(e) => setCreatePlanForm({ ...createPlanForm, monthlyAmount: e.target.value })}
+                                            placeholder="Monthly Amount"
+                                            className="w-full px-4 py-2.5 rounded-lg text-slate-700 text-sm border"
+                                        />
+                                    ) : (
+                                        <input
+                                            type="number"
+                                            value={createPlanForm.weeklyAmount}
+                                            onChange={(e) => setCreatePlanForm({ ...createPlanForm, weeklyAmount: e.target.value })}
+                                            placeholder="Weekly Amount"
+                                            className="w-full px-4 py-2.5 rounded-lg text-slate-700 text-sm border"
+                                        />
+                                    )}
                                 </div>
                             </div>
 
@@ -666,22 +741,34 @@ export default function User() {
                                         onChange={(e) => setCreatePlanForm({ ...createPlanForm, frequency: e.target.value })}
                                         className="w-full px-4 py-2.5 border  rounded-lg text-slate-600 text-sm "
                                     >
-                                        <option value="Daily">Daily</option>
                                         <option value="Weekly">Weekly</option>
                                         <option value="Monthly">Monthly</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                                        End date
+                                        Duration (Months)
                                     </label>
                                     <input
-                                        type="date"
-                                        value={createPlanForm.endDate}
-                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, endDate: e.target.value })}
+                                        type="number"
+                                        min="3"
+                                        value={createPlanForm.durationMonths}
+                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, durationMonths: e.target.value })}
+                                        placeholder="Min 3 months"
                                         className="w-full px-4 py-2.5 border border-slate-700 rounded-lg  text-slate-500 text-sm"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="autoDebit"
+                                    checked={createPlanForm.autoDebit}
+                                    onChange={(e) => setCreatePlanForm({ ...createPlanForm, autoDebit: e.target.checked })}
+                                    className="w-4 h-4 accent-emerald-600"
+                                />
+                                <label htmlFor="autoDebit" className="text-sm text-slate-600">Enable Auto Debit</label>
                             </div>
 
                             <div>
@@ -711,6 +798,18 @@ export default function User() {
                                 </select>
                             </div>
 
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-600 mb-2">
+                                    Description
+                                </label>
+                                <textarea
+                                    value={createPlanForm.description}
+                                    onChange={(e) => setCreatePlanForm({ ...createPlanForm, description: e.target.value })}
+                                    placeholder="Enter the plan's description..."
+                                    rows={3}
+                                    className="w-full px-4 py-2.5 border border-slate-700 rounded-lg  text-slate-600 text-sm  resize-none"
+                                />
+                            </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-600 mb-2">
                                     Delivery address

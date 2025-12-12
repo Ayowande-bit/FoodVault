@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+console.log(`${import.meta.env.VITE_API_BASE}/api/v1/auth/login`)
 
 export default function Sign() {
   const navigate = useNavigate();
@@ -9,6 +10,8 @@ export default function Sign() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,12 +22,15 @@ export default function Sign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     setError(null);
     setIsLoading(true);
 
+
     try {
       const res = await fetch(
-        "https://foodvault-36sx.onrender.com/api/v1/auth/login",
+        `${import.meta.env.VITE_API_BASE}/api/v1/auth/login`,
+        // "http://localhost:3000/api/v1/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,6 +39,8 @@ export default function Sign() {
       );
 
       const data = await res.json();
+      console.log(`Console loggind uri: /api/v1/auth/login`)
+
 
       if (!res.ok) {
         throw new Error(data.message || "Invalid email or password.");

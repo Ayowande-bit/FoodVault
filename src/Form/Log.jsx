@@ -64,7 +64,7 @@ export default function Log() {
 
     try {
       // Make API call
-      const response = await fetch('https://foodvault-36sx.onrender.com/api/v1/auth/register', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/v1/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,6 +77,8 @@ export default function Log() {
           phone: formData.phone
         })
       });
+
+      console.log(response)
 
       const data = await response.json();
 
