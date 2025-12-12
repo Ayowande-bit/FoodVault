@@ -242,7 +242,7 @@ export default function User() {
                 <div className="flex justify-between items-start mb-8 gap-4">
                     <div>
                         <p className="text-3xl text-gray-600 font-medium">
-                            {getGreeting()}, {user?.firstname || user.name || user?.fullName || 'User'}👋🏽
+                            {getGreeting()}, {user?.firstName || user?.firstname || user?.name || user?.fullName || 'User'}👋🏽
                         </p>
 
                         <p className="text-slate-400 text-lg mt-1">
@@ -393,8 +393,8 @@ export default function User() {
                                                         </div>
                                                     </div>
                                                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${(plan.status || 'active') === 'active'
-                                                            ? 'bg-emerald-600/15 text-gray-600 border border-emerald-400/30'
-                                                            : 'bg-slate-700/50 text-slate-300 border border-slate-600'
+                                                        ? 'bg-emerald-600/15 text-gray-600 border border-emerald-400/30'
+                                                        : 'bg-slate-700/50 text-slate-300 border border-slate-600'
                                                         }`}>
                                                         {plan.status || 'active'}
                                                     </span>
@@ -785,8 +785,8 @@ export default function User() {
                                         type="button"
                                         onClick={() => setAddMoneyForm({ ...addMoneyForm, paymentMethod: 'Card' })}
                                         className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 text-xs transition-all ${addMoneyForm.paymentMethod === 'Card'
-                                                ? 'border-emerald-500 bg-emerald-500/10 text-slate-900'
-                                                : 'border-slate-700 hover:border-slate-500 text-slate-700'
+                                            ? 'border-emerald-500 bg-emerald-500/10 text-slate-900'
+                                            : 'border-slate-700 hover:border-slate-500 text-slate-700'
                                             }`}
                                     >
                                         <CreditCard
@@ -799,8 +799,8 @@ export default function User() {
                                         type="button"
                                         onClick={() => setAddMoneyForm({ ...addMoneyForm, paymentMethod: 'Transfer' })}
                                         className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 text-xs transition-all ${addMoneyForm.paymentMethod === 'Transfer'
-                                                ? 'border-emerald-500 bg-emerald-500/10 text-slate-900'
-                                                : 'border-slate-700 hover:border-slate-500 text-slate-700'
+                                            ? 'border-emerald-500 bg-emerald-500/10 text-slate-900'
+                                            : 'border-slate-700 hover:border-slate-500 text-slate-700'
                                             }`}
                                     >
                                         <Smartphone

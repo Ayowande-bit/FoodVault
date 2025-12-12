@@ -91,6 +91,11 @@ export default function Log() {
           localStorage.setItem('authToken', data.token);
         }
 
+        // Save user data if available (handling different API responses)
+        if (data.data || data.user) {
+          localStorage.setItem('user', JSON.stringify(data.data || data.user));
+        }
+
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
           navigate('/user');
@@ -303,7 +308,7 @@ export default function Log() {
           <p className="text-xs text-gray-500 text-center mt-6 leading-relaxed">
             By clicking Register, or Sign Up, you agree to FoodVault{' '}
             <a href="#" className="text-green-700 hover:underline">Privacy Policy</a> and{' '}
-            <a href="#" className="text-green-700 hover:underline">Terms of Service</a>. 
+            <a href="#" className="text-green-700 hover:underline">Terms of Service</a>.
             You also agree to receive marketing communications from us.
           </p>
         </div>
