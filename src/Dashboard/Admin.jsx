@@ -14,7 +14,7 @@ export default function AdminDashboard() {
   // YOUR EXACT API: GET /admin/stats
   const fetchStats = async () => {
     const res = await fetch(`${API_BASE}/admin/stats`, {
-      credentials: "include",
+      // credentials: "include", // Commenting out to avoid CORS issues if backend doesn't support it
     });
     if (!res.ok) throw new Error("Stats failed");
     return res.json();
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   // YOUR EXACT API: GET /admin/plans
   const fetchPlans = async () => {
     const res = await fetch(`${API_BASE}/admin/plans`, {
-      credentials: "include",
+      // credentials: "include",
     });
     if (!res.ok) throw new Error("Plans failed");
     return res.json();
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
       `${API_BASE}/admin/plan/${planId}/${endpoint}`,
       {
         method: "POST",
-        credentials: "include",
+        // credentials: "include",
       }
     );
     if (!res.ok) throw new Error("Toggle failed");
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
   // YOUR EXACT API: GET /admin/plan/:planId (for future use)
   const getSinglePlan = async (planId) => {
     const res = await fetch(`${API_BASE}/admin/plan/${planId}`, {
-      credentials: "include",
+      // credentials: "include",
     });
     if (!res.ok) throw new Error("Single plan failed");
     return res.json();

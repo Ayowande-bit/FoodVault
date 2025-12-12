@@ -222,7 +222,7 @@ export default function User() {
 
         } catch (error) {
             console.error('Error initializing payment:', error);
-            alert('An error occurred. Please check your connection.');
+            alert(`Payment Error: ${error.message || 'Connection failed'}. Check console for details.`);
         }
 
         setShowAddMoneyModal(false);
@@ -830,15 +830,42 @@ export default function User() {
                                 </div>
                             </div>
 
-                            <p className="text-[11px] text-slate-700 bg-gray-300  px-3 py-2 rounded-lg">
-                                Your savings will be used to purchase fresh food items directly from local farmers in Ekiti State.
+                            <p className="text-[11px] text-slate-500 bg-slate-100 px-3 py-2 rounded-lg border border-slate-200">
+                                <strong>Note:</strong> Card payments are instant. Transfers may take a few minutes to reflect.
                             </p>
+
+                            {addMoneyForm.paymentMethod === 'Transfer' && (
+                                <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl space-y-3">
+                                    <h4 className="text-sm font-bold text-emerald-800 border-b border-emerald-200 pb-2">
+                                        Bank Transfer Guidelines
+                                    </h4>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-slate-500">Bank Name</span>
+                                            <span className="font-bold text-slate-700">Wema Bank</span>
+                                        </div>
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-slate-500">Account Number</span>
+                                            <span className="font-bold text-slate-700 font-mono text-sm">0123456789</span>
+                                        </div>
+                                        <div className="flex justify-between text-xs">
+                                            <span className="text-slate-500">Account Name</span>
+                                            <span className="font-bold text-slate-700">FoodVault Savings</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-[10px] text-emerald-700 pt-2 border-t border-emerald-200/50">
+                                        1. Transfer exactly <strong>₦{addMoneyForm.amount || '0'}</strong>.<br />
+                                        2. Use your Plan Name as narration.<br />
+                                        3. Click "I have sent the money" below.
+                                    </div>
+                                </div>
+                            )}
 
                             <button
                                 onClick={handleAddMoney}
                                 className="w-full py-2.5 bg-linear-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-400 hover:to-emerald-500 transition-colors"
                             >
-                                Deposit ₦{addMoneyForm.amount ? parseFloat(addMoneyForm.amount).toLocaleString() : '0'}
+                                {addMoneyForm.paymentMethod === 'Card' ? `Pay ₦${addMoneyForm.amount || '0'} with Card` : 'I have sent the money'}
                             </button>
                         </div>
                     </div>
