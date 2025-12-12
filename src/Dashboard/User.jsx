@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Wallet, TrendingUp, Calendar, Package, ArrowDownCircle, X, 
+import {
+    Wallet, TrendingUp, Calendar, Package, ArrowDownCircle, X,
     CreditCard, Smartphone, LogOut, Phone, MessageCircle, Mail
 } from 'lucide-react';
 
@@ -8,7 +8,7 @@ export default function User() {
     const [user, setUser] = useState(null);
     const [plans, setPlans] = useState([]);
     const [transactions, setTransactions] = useState([]);
-    
+
     // Modal states
     const [showCreatePlanModal, setShowCreatePlanModal] = useState(false);
     const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
@@ -49,20 +49,20 @@ export default function User() {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json', 'user-id': storedUser._id }
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success && data.plans) {
-                    setPlans(data.plans);
-                    localStorage.setItem('plans', JSON.stringify(data.plans));
-                } else {
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.plans) {
+                        setPlans(data.plans);
+                        localStorage.setItem('plans', JSON.stringify(data.plans));
+                    } else {
+                        const localPlans = JSON.parse(localStorage.getItem('plans') || '[]');
+                        setPlans(localPlans);
+                    }
+                })
+                .catch(() => {
                     const localPlans = JSON.parse(localStorage.getItem('plans') || '[]');
                     setPlans(localPlans);
-                }
-            })
-            .catch(() => {
-                const localPlans = JSON.parse(localStorage.getItem('plans') || '[]');
-                setPlans(localPlans);
-            });
+                });
 
             const savedTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
             setTransactions(savedTransactions);
@@ -129,15 +129,15 @@ export default function User() {
         try {
             const res = await fetch(`${API_BASE}/create`, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'user-id': user._id
                 },
                 body: JSON.stringify(payload),
             });
-            
+
             const data = await res.json();
-            
+
             if (data.success && data.newPlan) {
                 setPlans(prev => [...prev, data.newPlan]);
                 const updatedPlans = [...plans, data.newPlan];
@@ -175,6 +175,7 @@ export default function User() {
     };
 
     // Add money
+    // Add money
     const handleAddMoney = async () => {
         if (!addMoneyForm.amount || !selectedPlan) {
             alert('Please enter an amount');
@@ -187,76 +188,44 @@ export default function User() {
             return;
         }
 
-        const payload = { amount };
-
         try {
-            const res = await fetch(`${API_BASE}/update/${selectedPlan._id}`, {
-                method: 'PATCH',
-                headers: { 
+            // Call initialize payment endpoint
+            const res = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json',
                     'user-id': user._id
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify({
+                    email: user.email,
+                    amount: amount,
+                    // Pass planId in metadata or callback params so we can credit the right plan on return
+                    // The API likely redirects back with a reference. 
+                    // We'll handle the actual crediting in the Verify page or rely on webhook, 
+                    // but for this flow: Initialize -> Redirect -> Verify -> Update UI
+                    callback_url: `${window.location.origin}/payment/verify?planId=${selectedPlan._id}`
+                }),
             });
+
             const data = await res.json();
-            
-            if (data.success && data.updatedPlan) {
-                setPlans(prev => prev.map(p => p._id === selectedPlan._id ? data.updatedPlan : p));
-                const updatedPlans = plans.map(p => p._id === selectedPlan._id ? data.updatedPlan : p);
-                localStorage.setItem('plans', JSON.stringify(updatedPlans));
+
+            if (data.status && data.data && data.data.authorization_url) {
+                // Redirect to payment gateway
+                window.location.href = data.data.authorization_url;
             } else {
-                const updatedPlan = {
-                    ...selectedPlan,
-                    currentAmount: (selectedPlan.currentAmount || 0) + amount
-                };
-                setPlans(prev => prev.map(p => p._id === selectedPlan._id ? updatedPlan : p));
-                const updatedPlans = plans.map(p => p._id === selectedPlan._id ? updatedPlan : p);
-                localStorage.setItem('plans', JSON.stringify(updatedPlans));
+                // Fallback or error
+                console.error('Payment initialization failed:', data);
+                alert('Failed to initialize payment. Please try again.');
             }
 
-            const newTransaction = {
-                id: Date.now().toString(),
-                planId: selectedPlan._id,
-                planName: selectedPlan.planName || 'Food Savings',
-                amount: amount,
-                paymentMethod: addMoneyForm.paymentMethod,
-                date: new Date().toISOString().split('T')[0],
-                type: 'Deposit',
-                timestamp: new Date().toISOString()
-            };
-            
-            const updatedTransactions = [newTransaction, ...transactions];
-            setTransactions(updatedTransactions);
-            localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-        } catch {
-            const updatedPlan = {
-                ...selectedPlan,
-                currentAmount: (selectedPlan.currentAmount || 0) + amount
-            };
-            setPlans(prev => prev.map(p => p._id === selectedPlan._id ? updatedPlan : p));
-            const updatedPlans = plans.map(p => p._id === selectedPlan._id ? updatedPlan : p);
-            localStorage.setItem('plans', JSON.stringify(updatedPlans));
-
-            const newTransaction = {
-                id: Date.now().toString(),
-                planId: selectedPlan._id,
-                planName: selectedPlan.planName || 'Food Savings',
-                amount: amount,
-                paymentMethod: addMoneyForm.paymentMethod,
-                date: new Date().toISOString().split('T')[0],
-                type: 'Deposit',
-                timestamp: new Date().toISOString()
-            };
-            
-            const updatedTransactions = [newTransaction, ...transactions];
-            setTransactions(updatedTransactions);
-            localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        } catch (error) {
+            console.error('Error initializing payment:', error);
+            alert('An error occurred. Please check your connection.');
         }
 
         setShowAddMoneyModal(false);
-        setSelectedPlan(null);
-        setAddMoneyForm({ amount: '', paymentMethod: 'Card' });
-        alert(`Successfully added ₦${amount.toLocaleString()} to your savings plan!`);
+        // We don't clear form/selection immediately in case they come back or it fails, 
+        // but typically the page unloads on redirect.
     };
 
     const handleLogout = () => {
@@ -272,10 +241,10 @@ export default function User() {
                 {/* Header */}
                 <div className="flex justify-between items-start mb-8 gap-4">
                     <div>
-                      <p className="text-3xl text-gray-600 font-medium">
-                          {getGreeting()}, {user?.firstname || user.name || user?.fullName || 'User'}👋🏽
+                        <p className="text-3xl text-gray-600 font-medium">
+                            {getGreeting()}, {user?.firstname || user.name || user?.fullName || 'User'}👋🏽
                         </p>
-                        
+
                         <p className="text-slate-400 text-lg mt-1">
                             Track your plans, deposits, and food value in one place.
                         </p>
@@ -405,7 +374,7 @@ export default function User() {
                                         const planTransactions = transactions.filter(t => t.planId === plan._id);
 
                                         return (
-                                            <div 
+                                            <div
                                                 key={plan._id}
                                                 className=" rounded-2xl p-5 shadow-lg shadow-black/40 bg-gray-100  transition-all"
                                             >
@@ -423,11 +392,10 @@ export default function User() {
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                        (plan.status || 'active') === 'active'
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${(plan.status || 'active') === 'active'
                                                             ? 'bg-emerald-600/15 text-gray-600 border border-emerald-400/30'
                                                             : 'bg-slate-700/50 text-slate-300 border border-slate-600'
-                                                    }`}>
+                                                        }`}>
                                                         {plan.status || 'active'}
                                                     </span>
                                                 </div>
@@ -497,7 +465,7 @@ export default function User() {
                             <h2 className="text-2xl font-bold text-slate-500 mb-3">
                                 Recent Transactions
                             </h2>
-                            
+
                             {transactions.length === 0 ? (
                                 <div className="bg-slate-200 rounded-2xl p-6 text-center ">
                                     <p className="text-slate-400 text-sm">
@@ -507,7 +475,7 @@ export default function User() {
                             ) : (
                                 <div className="space-y-3">
                                     {transactions.map((transaction) => (
-                                        <div 
+                                        <div
                                             key={transaction.id}
                                             className="bg-white-100 rounded-2xl p-4 shadow-md shadow-gray-400 flex items-center justify-between"
                                         >
@@ -616,7 +584,7 @@ export default function User() {
                             <h3 className="text-lg md:text-xl font-bold text-slate-500">
                                 Create new savings plan
                             </h3>
-                            <button 
+                            <button
                                 onClick={() => setShowCreatePlanModal(false)}
                                 className="text-slate-400 hover:text-slate-200"
                             >
@@ -633,7 +601,7 @@ export default function User() {
                                     <input
                                         type="number"
                                         value={createPlanForm.targetAmount}
-                                        onChange={(e) => setCreatePlanForm({...createPlanForm, targetAmount: e.target.value})}
+                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, targetAmount: e.target.value })}
                                         placeholder="e.g., 50000"
                                         className="w-full px-4 py-2.5 rounded-lg text-slate-700 text-sm border"
                                     />
@@ -645,7 +613,7 @@ export default function User() {
                                     <input
                                         type="number"
                                         value={createPlanForm.cycleAmount}
-                                        onChange={(e) => setCreatePlanForm({...createPlanForm, cycleAmount: e.target.value})}
+                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, cycleAmount: e.target.value })}
                                         placeholder="e.g., 5000"
                                         className="w-full px-4 py-2.5  rounded-lg text-slate-700 text-sm border"
                                     />
@@ -659,7 +627,7 @@ export default function User() {
                                     </label>
                                     <select
                                         value={createPlanForm.frequency}
-                                        onChange={(e) => setCreatePlanForm({...createPlanForm, frequency: e.target.value})}
+                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, frequency: e.target.value })}
                                         className="w-full px-4 py-2.5 border  rounded-lg text-slate-600 text-sm "
                                     >
                                         <option value="Daily">Daily</option>
@@ -674,7 +642,7 @@ export default function User() {
                                     <input
                                         type="date"
                                         value={createPlanForm.endDate}
-                                        onChange={(e) => setCreatePlanForm({...createPlanForm, endDate: e.target.value})}
+                                        onChange={(e) => setCreatePlanForm({ ...createPlanForm, endDate: e.target.value })}
                                         className="w-full px-4 py-2.5 border border-slate-700 rounded-lg  text-slate-500 text-sm"
                                     />
                                 </div>
@@ -686,7 +654,7 @@ export default function User() {
                                 </label>
                                 <select
                                     value={createPlanForm.lga}
-                                    onChange={(e) => setCreatePlanForm({...createPlanForm, lga: e.target.value})}
+                                    onChange={(e) => setCreatePlanForm({ ...createPlanForm, lga: e.target.value })}
                                     className="w-full px-4 py-2.5 border border-slate-700 rounded-lg  text-slate-500 text-sm "
                                 >
                                     <option value="">Select LGA</option>
@@ -713,7 +681,7 @@ export default function User() {
                                 </label>
                                 <textarea
                                     value={createPlanForm.deliveryAddress}
-                                    onChange={(e) => setCreatePlanForm({...createPlanForm, deliveryAddress: e.target.value})}
+                                    onChange={(e) => setCreatePlanForm({ ...createPlanForm, deliveryAddress: e.target.value })}
                                     placeholder="Enter your full delivery address..."
                                     rows={3}
                                     className="w-full px-4 py-2.5 border border-slate-700 rounded-lg  text-slate-600 text-sm  resize-none"
@@ -771,7 +739,7 @@ export default function User() {
                                     {selectedPlan.planName || 'Food Savings'}
                                 </p>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => {
                                     setShowAddMoneyModal(false);
                                     setSelectedPlan(null);
@@ -790,7 +758,7 @@ export default function User() {
                                 <input
                                     type="number"
                                     value={addMoneyForm.amount}
-                                    onChange={(e) => setAddMoneyForm({...addMoneyForm, amount: e.target.value})}
+                                    onChange={(e) => setAddMoneyForm({ ...addMoneyForm, amount: e.target.value })}
                                     placeholder="Enter amount"
                                     className="w-full px-4 py-2.5 border border-slate-700 rounded-lg  text-slate-800 text-sm  "
                                 />
@@ -800,7 +768,7 @@ export default function User() {
                                 {quickAmounts.map(amount => (
                                     <button
                                         key={amount}
-                                        onClick={() => setAddMoneyForm({...addMoneyForm, amount: amount.toString()})}
+                                        onClick={() => setAddMoneyForm({ ...addMoneyForm, amount: amount.toString() })}
                                         className="px-4 py-2 border border-slate-700 rounded-lg text-xs font-medium text-slate-900 hover:bg-gray-400 transition-colors"
                                     >
                                         ₦{amount.toLocaleString()}
@@ -815,31 +783,29 @@ export default function User() {
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         type="button"
-                                        onClick={() => setAddMoneyForm({...addMoneyForm, paymentMethod: 'Card'})}
-                                        className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 text-xs transition-all ${
-                                            addMoneyForm.paymentMethod === 'Card'
+                                        onClick={() => setAddMoneyForm({ ...addMoneyForm, paymentMethod: 'Card' })}
+                                        className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 text-xs transition-all ${addMoneyForm.paymentMethod === 'Card'
                                                 ? 'border-emerald-500 bg-emerald-500/10 text-slate-900'
                                                 : 'border-slate-700 hover:border-slate-500 text-slate-700'
-                                        }`}
+                                            }`}
                                     >
-                                        <CreditCard 
-                                            size={22} 
-                                            className={addMoneyForm.paymentMethod === 'Card' ? 'text-emerald-900' : 'text-slate-600'} 
+                                        <CreditCard
+                                            size={22}
+                                            className={addMoneyForm.paymentMethod === 'Card' ? 'text-emerald-900' : 'text-slate-600'}
                                         />
                                         <span className="font-medium">Card</span>
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => setAddMoneyForm({...addMoneyForm, paymentMethod: 'Transfer'})}
-                                        className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 text-xs transition-all ${
-                                            addMoneyForm.paymentMethod === 'Transfer'
+                                        onClick={() => setAddMoneyForm({ ...addMoneyForm, paymentMethod: 'Transfer' })}
+                                        className={`p-4 border-2 rounded-xl flex flex-col items-center gap-2 text-xs transition-all ${addMoneyForm.paymentMethod === 'Transfer'
                                                 ? 'border-emerald-500 bg-emerald-500/10 text-slate-900'
                                                 : 'border-slate-700 hover:border-slate-500 text-slate-700'
-                                        }`}
+                                            }`}
                                     >
-                                        <Smartphone 
-                                            size={22} 
-                                            className={addMoneyForm.paymentMethod === 'Transfer' ? 'text-emerald-900' : 'text-slate-600'} 
+                                        <Smartphone
+                                            size={22}
+                                            className={addMoneyForm.paymentMethod === 'Transfer' ? 'text-emerald-900' : 'text-slate-600'}
                                         />
                                         <span className="font-medium">Transfer</span>
                                     </button>

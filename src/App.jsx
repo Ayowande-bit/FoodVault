@@ -7,13 +7,14 @@ import Log from './Form/Log.jsx';
 import Sign from './Form/Sign.jsx';
 import User from './Dashboard/User.jsx';
 import About from './Components/About.jsx'
+import PaymentVerify from './Dashboard/PaymentVerify.jsx';
 
 
 function App() {
   const location = useLocation();
-  
+
   // Hide header on login/signup page
-  const hideHeaderRoutes = ['/log','/user'];
+  const hideHeaderRoutes = ['/log', '/user'];
   const shouldShowHeader = !hideHeaderRoutes.includes(location.pathname);
 
   return (
@@ -27,8 +28,9 @@ function App() {
         <Route path="/sign" element={<Sign />} />
         <Route path="/user" element={<User />} />
         <Route path="/about" element={<About />} />
-        
-        
+        <Route path="/payment/verify" element={<PaymentVerify />} />
+
+
       </Routes>
     </>
   );
