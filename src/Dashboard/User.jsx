@@ -257,11 +257,6 @@ export default function User() {
                             }👋🏽
                         </p>
 
-                        {/* VISIBLE DEBUG info - Remove after fixing */}
-                        <div className="text-[10px] bg-black text-green-400 p-2 rounded mt-2 max-w-lg overflow-auto">
-                            Debug Info: {JSON.stringify(user, null, 2)}
-                        </div>
-
                         <p className="text-slate-400 text-lg mt-1">
                             Track your plans, deposits, and food value in one place.
                         </p>
