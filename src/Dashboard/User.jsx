@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Wallet, TrendingUp, Calendar, Package, ArrowDownCircle, X,
-    CreditCard, Smartphone, LogOut, Phone, MessageCircle, Mail
+    CreditCard, Smartphone, LogOut, Phone, MessageCircle, Mail, ShoppingBasket
 } from 'lucide-react';
 
 export default function User() {
@@ -64,8 +64,25 @@ export default function User() {
                     setPlans(localPlans);
                 });
 
-            const savedTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-            setTransactions(savedTransactions);
+            // Fetch transactions
+            fetch('https://foodvault-36sx.onrender.com/payments/transactions', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json', 'user-id': storedUser._id }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status && data.data) {
+                        setTransactions(data.data);
+                        localStorage.setItem('transactions', JSON.stringify(data.data));
+                    } else {
+                        setTransactions([]);
+                    }
+                })
+                .catch(err => {
+                    console.error("Failed to load transactions", err);
+                    const savedTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                    setTransactions(savedTransactions);
+                });
         } catch {
             window.location.href = '/sign';
         }
@@ -188,38 +205,40 @@ export default function User() {
             return;
         }
 
-        // Simulate successful payment (Offline Mode)
-        const newTransaction = {
-            id: Date.now().toString(),
-            planId: selectedPlan._id,
-            planName: selectedPlan.planName,
-            type: 'Deposit',
-            amount: amount,
-            date: new Date().toISOString(),
-            status: 'success'
-        };
+        try {
+            // Call initialize payment endpoint
+            // Endpoint: POST /payments/initialize
+            // Body: amount, email, planId
+            const res = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': user._id
+                },
+                body: JSON.stringify({
+                    email: user.email,
+                    amount: amount,
+                    planId: selectedPlan._id // Include planId as required
+                }),
+            });
 
-        // Update local state
-        const updatedTransactions = [newTransaction, ...transactions];
-        setTransactions(updatedTransactions);
+            const data = await res.json();
 
-        // Update local storage for transactions
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-
-        // Update plan balance
-        const updatedPlans = plans.map(p => {
-            if (p._id === selectedPlan._id) {
-                return { ...p, currentAmount: (p.currentAmount || 0) + amount };
+            if (data.status && data.data && data.data.authorization_url) {
+                // Redirect to payment gateway
+                window.location.href = data.data.authorization_url;
+            } else {
+                // Fallback or error
+                console.error('Payment initialization failed:', data);
+                alert('Failed to initialize payment. Please try again.');
             }
-            return p;
-        });
-        setPlans(updatedPlans);
-        localStorage.setItem('plans', JSON.stringify(updatedPlans));
 
-        alert(`Successfully added ₦${amount.toLocaleString()} to ${selectedPlan.planName}!`);
+        } catch (error) {
+            console.error('Error initializing payment:', error);
+            alert(`Payment Error: ${error.message || 'Connection failed'}. Check console for details.`);
+        }
+
         setShowAddMoneyModal(false);
-        setAddMoneyForm({ amount: '', paymentMethod: 'Card' });
-        setSelectedPlan(null);
     };
 
     const handleLogout = () => {
@@ -265,6 +284,13 @@ export default function User() {
                             className="bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white px-4 py-2.5 md:px-6 md:py-3 rounded-2xl text-sm font-semibold shadow-lg shadow-emerald-500/30 transition-all"
                         >
                             + New Savings Plan
+                        </button>
+                        <button
+                            onClick={() => window.location.href = '/market'}
+                            className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 md:px-6 md:py-3 rounded-2xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
+                        >
+                            <ShoppingBasket size={18} className="text-emerald-600" />
+                            <span className="hidden sm:inline">Market</span>
                         </button>
                         <button
                             onClick={handleLogout}

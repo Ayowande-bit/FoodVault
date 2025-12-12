@@ -7,7 +7,8 @@ import Log from './Form/Log.jsx';
 import Sign from './Form/Sign.jsx';
 import User from './Dashboard/User.jsx';
 import About from './Components/About.jsx'
-
+import PaymentVerify from './Dashboard/PaymentVerify.jsx';
+import Market from './Dashboard/Market.jsx';
 import AdminDashboard from './Dashboard/Admin.jsx';
 
 
@@ -29,7 +30,8 @@ function App() {
         <Route path="/sign" element={<Sign />} />
         <Route path="/user" element={<User />} />
         <Route path="/about" element={<About />} />
-
+        <Route path="/payment/verify" element={<PaymentVerify />} />
+        <Route path="/market" element={<Market />} />
         <Route path="/admin" element={<AdminDashboard />} />
 
 
