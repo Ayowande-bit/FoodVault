@@ -65,9 +65,7 @@ export default function User() {
                 });
 
             const savedTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-            // Filter transactions for safe measure
-            // setTransactions(savedTransactions); 
-            setTransactions([]); // Safest to start empty until we verify ownership or API loads it
+            setTransactions(savedTransactions);
         } catch {
             window.location.href = '/sign';
         }
@@ -190,44 +188,38 @@ export default function User() {
             return;
         }
 
-        try {
-            // Call initialize payment endpoint
-            const res = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'user-id': user._id
-                },
-                body: JSON.stringify({
-                    email: user.email,
-                    amount: amount,
-                    // Pass planId in metadata or callback params so we can credit the right plan on return
-                    // The API likely redirects back with a reference. 
-                    // We'll handle the actual crediting in the Verify page or rely on webhook, 
-                    // but for this flow: Initialize -> Redirect -> Verify -> Update UI
-                    callback_url: `${window.location.origin}/payment/verify?planId=${selectedPlan._id}`
-                }),
-            });
+        // Simulate successful payment (Offline Mode)
+        const newTransaction = {
+            id: Date.now().toString(),
+            planId: selectedPlan._id,
+            planName: selectedPlan.planName,
+            type: 'Deposit',
+            amount: amount,
+            date: new Date().toISOString(),
+            status: 'success'
+        };
 
-            const data = await res.json();
+        // Update local state
+        const updatedTransactions = [newTransaction, ...transactions];
+        setTransactions(updatedTransactions);
 
-            if (data.status && data.data && data.data.authorization_url) {
-                // Redirect to payment gateway
-                window.location.href = data.data.authorization_url;
-            } else {
-                // Fallback or error
-                console.error('Payment initialization failed:', data);
-                alert('Failed to initialize payment. Please try again.');
+        // Update local storage for transactions
+        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+
+        // Update plan balance
+        const updatedPlans = plans.map(p => {
+            if (p._id === selectedPlan._id) {
+                return { ...p, currentAmount: (p.currentAmount || 0) + amount };
             }
+            return p;
+        });
+        setPlans(updatedPlans);
+        localStorage.setItem('plans', JSON.stringify(updatedPlans));
 
-        } catch (error) {
-            console.error('Error initializing payment:', error);
-            alert(`Payment Error: ${error.message || 'Connection failed'}. Check console for details.`);
-        }
-
+        alert(`Successfully added ₦${amount.toLocaleString()} to ${selectedPlan.planName}!`);
         setShowAddMoneyModal(false);
-        // We don't clear form/selection immediately in case they come back or it fails, 
-        // but typically the page unloads on redirect.
+        setAddMoneyForm({ amount: '', paymentMethod: 'Card' });
+        setSelectedPlan(null);
     };
 
     const handleLogout = () => {
