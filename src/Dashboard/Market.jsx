@@ -6,39 +6,39 @@ const API_BASE = 'https://foodvault-36sx.onrender.com';
 
 // Extensive Nigerian Market Data
 const NIGERIAN_MARKET_DATA = [
-    // Grains & Flours
-    { id: 'rice-50kg', name: 'Foreign Rice (50kg)', price: 75000, category: 'Grains', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'rice-25kg', name: 'Foreign Rice (25kg)', price: 38000, category: 'Grains', image: 'https://images.unsplash.com/photo-1536304993881-ff000997bc50?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'local-rice', name: 'Local Rice (Painter)', price: 6500, category: 'Grains', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'beans-oloyin', name: 'Beans Oloyin (Painter)', price: 8500, category: 'Grains', image: 'https://images.unsplash.com/photo-1551462147-37885acc36f1?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'garri-white', name: 'Garri White (Painter)', price: 3500, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ba/Garri_foto.jpg/800px-Garri_foto.jpg' },
-    { id: 'garri-yellow', name: 'Garri Yellow (Painter)', price: 4000, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Garri_and_groundnut.jpg' },
-    { id: 'semovita-10kg', name: 'Semovita (10kg)', price: 10500, category: 'Grains', image: 'https://guardian.ng/wp-content/uploads/2021/08/Semovita.jpg' }, // Keeping this as obtaining a stock photo for Semovita is specifically hard, fallback to a representative one if needed, but trying a cleaner link if possible, or sticking to the best available. I will use a high quality generic flour sack if specific is unavailable, but let's try a better generic option for "Grain sack" if this link fails? Actually let's use a clear "Flour Sack" image.
+    // Grains & Flours - Farm Prices
+    { id: 'rice-50kg', name: 'Foreign Rice (50kg)', price: 45000, category: 'Grains', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'rice-25kg', name: 'Foreign Rice (25kg)', price: 23000, category: 'Grains', image: 'https://images.unsplash.com/photo-1536304993881-ff000997bc50?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'local-rice', name: 'Local Rice (Painter)', price: 3500, category: 'Grains', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'beans-oloyin', name: 'Beans Oloyin (Painter)', price: 4800, category: 'Grains', image: 'https://images.unsplash.com/photo-1551462147-37885acc36f1?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'garri-white', name: 'Garri White (Painter)', price: 2200, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ba/Garri_foto.jpg/800px-Garri_foto.jpg' },
+    { id: 'garri-yellow', name: 'Garri Yellow (Painter)', price: 2500, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Garri_and_groundnut.jpg' },
+    { id: 'semovita-10kg', name: 'Semovita (10kg)', price: 8000, category: 'Grains', image: 'https://guardian.ng/wp-content/uploads/2021/08/Semovita.jpg' }, // Keeping this as obtaining a stock photo for Semovita is specifically hard, fallback to a representative one if needed, but trying a cleaner link if possible, or sticking to the best available. I will use a high quality generic flour sack if specific is unavailable, but let's try a better generic option for "Grain sack" if this link fails? Actually let's use a clear "Flour Sack" image.
     // Re-evaluating Semovita: providing a clearer generic flour bag image for Better UI consistency
     // { id: 'semovita-10kg', name: 'Semovita (10kg)', price: 10500, category: 'Grains', image: 'https://images.unsplash.com/photo-1627485937980-221c88ac04f9?q=80&w=1000' },
 
-    // Tubers
-    { id: 'yam-large', name: 'Yam (Large Tuber)', price: 4500, category: 'Tubers', image: 'https://netstorage-legit.akamaized.net/images/vllkyt31d07c08d13.jpg' },
-    { id: 'yam-medium', name: 'Yam (Medium Tuber)', price: 2800, category: 'Tubers', image: 'https://guardian.ng/wp-content/uploads/2016/08/Yam-tubers.jpg' },
-    { id: 'potato-sweet', name: 'Sweet Potato (Basket)', price: 5000, category: 'Tubers', image: 'https://images.unsplash.com/photo-1596097635121-14b63b8200de?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'potato-irish', name: 'Irish Potato (Basket)', price: 8000, category: 'Tubers', image: 'https://images.unsplash.com/photo-1518977676651-71f6480bc68d?q=80&w=1000&auto=format&fit=crop' },
+    // Tubers - Farm Prices
+    { id: 'yam-large', name: 'Yam (Large Tuber)', price: 2500, category: 'Tubers', image: 'https://netstorage-legit.akamaized.net/images/vllkyt31d07c08d13.jpg' },
+    { id: 'yam-medium', name: 'Yam (Medium Tuber)', price: 1500, category: 'Tubers', image: 'https://guardian.ng/wp-content/uploads/2016/08/Yam-tubers.jpg' },
+    { id: 'potato-sweet', name: 'Sweet Potato (Basket)', price: 3000, category: 'Tubers', image: 'https://images.unsplash.com/photo-1596097635121-14b63b8200de?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'potato-irish', name: 'Irish Potato (Basket)', price: 4500, category: 'Tubers', image: 'https://images.unsplash.com/photo-1518977676651-71f6480bc68d?q=80&w=1000&auto=format&fit=crop' },
 
-    // Proteins
-    { id: 'chicken-frozen', name: 'Frozen Chicken (Full)', price: 9000, category: 'Proteins', image: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'turkey-wings', name: 'Turkey Wings (kg)', price: 5500, category: 'Proteins', image: 'https://images.unsplash.com/photo-1598103371890-a569580bac93?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'beef-kg', name: 'Beef (kg)', price: 5000, category: 'Proteins', image: 'https://images.unsplash.com/photo-1603048297172-c92544798d5e?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'egusi', name: 'Egusi (Cup)', price: 1200, category: 'Ingredients', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Egusi_Seeds.jpg/800px-Egusi_Seeds.jpg' },
-    { id: 'crayfish', name: 'Crayfish (Big Bag)', price: 6000, category: 'Ingredients', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Crayfish_at_a_market.jpg/800px-Crayfish_at_a_market.jpg' },
+    // Proteins - Farm Prices
+    { id: 'chicken-frozen', name: 'Frozen Chicken (Full)', price: 6500, category: 'Proteins', image: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'turkey-wings', name: 'Turkey Wings (kg)', price: 3500, category: 'Proteins', image: 'https://images.unsplash.com/photo-1598103371890-a569580bac93?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'beef-kg', name: 'Beef (kg)', price: 3500, category: 'Proteins', image: 'https://images.unsplash.com/photo-1603048297172-c92544798d5e?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'egusi', name: 'Egusi (Cup)', price: 800, category: 'Ingredients', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Egusi_Seeds.jpg/800px-Egusi_Seeds.jpg' },
+    { id: 'crayfish', name: 'Crayfish (Big Bag)', price: 4000, category: 'Ingredients', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Crayfish_at_a_market.jpg/800px-Crayfish_at_a_market.jpg' },
 
-    // Oils & Spices
-    { id: 'palm-oil-5l', name: 'Palm Oil (5 Liters)', price: 8500, category: 'Oils & Spices', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Palm_oil_production_in_Jukwa_Village_09.jpg' },
-    { id: 'veg-oil-3l', name: 'Vegetable Oil (3 Liters)', price: 9000, category: 'Oils & Spices', image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcdcc3a?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'maggi-pack', name: 'Maggi Star (Pack)', price: 1500, category: 'Oils & Spices', image: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Maggi_cubes.jpg' },
-    { id: 'salt', name: 'Dangote Salt (Bag)', price: 500, category: 'Oils & Spices', image: 'https://images.unsplash.com/photo-1518110925495-5fe2abca2b2a?q=80&w=1000&auto=format&fit=crop' },
+    // Oils & Spices - Farm Prices
+    { id: 'palm-oil-5l', name: 'Palm Oil (5 Liters)', price: 5500, category: 'Oils & Spices', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Palm_oil_production_in_Jukwa_Village_09.jpg' },
+    { id: 'veg-oil-3l', name: 'Vegetable Oil (3 Liters)', price: 6000, category: 'Oils & Spices', image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcdcc3a?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'maggi-pack', name: 'Maggi Star (Pack)', price: 900, category: 'Oils & Spices', image: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Maggi_cubes.jpg' },
+    { id: 'salt', name: 'Dangote Salt (Bag)', price: 300, category: 'Oils & Spices', image: 'https://images.unsplash.com/photo-1518110925495-5fe2abca2b2a?q=80&w=1000&auto=format&fit=crop' },
 
-    // Vegetables
-    { id: 'onions-bskt', name: 'Onions (Small Basket)', price: 4500, category: 'Vegetables', image: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=1000&auto=format&fit=crop' },
-    { id: 'pepper-basket', name: 'Pepper & Tomatoes (Basket)', price: 12000, category: 'Vegetables', image: 'https://images.unsplash.com/photo-1563565375-f3fdf8655e01?q=80&w=1000&auto=format&fit=crop' },
+    // Vegetables - Farm Prices
+    { id: 'onions-bskt', name: 'Onions (Small Basket)', price: 2500, category: 'Vegetables', image: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'pepper-basket', name: 'Pepper & Tomatoes (Basket)', price: 7000, category: 'Vegetables', image: 'https://images.unsplash.com/photo-1563565375-f3fdf8655e01?q=80&w=1000&auto=format&fit=crop' },
 ];
 
 const CATEGORIES = ['All', 'Grains', 'Tubers', 'Proteins', 'Ingredients', 'Oils & Spices', 'Vegetables'];
@@ -72,7 +72,8 @@ export default function Market() {
 
     const handleAddToCart = (item) => {
         if (cartTotal + item.price > savings) {
-            return; // Blocked
+            alert("Insufficient Funds: You don't have enough savings to add this item.");
+            return;
         }
         setCart(prev => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
     };
@@ -107,21 +108,21 @@ export default function Market() {
                     </div>
 
                     {/* Budget Bar */}
-                    <div className="bg-slate-900 rounded-2xl p-5 text-white mb-6 shadow-xl relative overflow-hidden group">
+                    <div className="bg-emerald-900 rounded-2xl p-5 text-white mb-6 shadow-xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                             <Wallet size={120} />
                         </div>
                         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <p className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-1">Available Savings</p>
+                                <p className="text-emerald-300 text-sm font-medium uppercase tracking-wider mb-1">Available Savings</p>
                                 <p className="text-3xl md:text-4xl font-black tracking-tight">₦{savings.toLocaleString()}</p>
                             </div>
                             <div className="flex-1 w-full md:max-w-md">
-                                <div className="flex justify-between text-xs font-semibold text-slate-300 mb-2">
+                                <div className="flex justify-between text-xs font-semibold text-emerald-300 mb-2">
                                     <span>Spent: ₦{cartTotal.toLocaleString()}</span>
                                     <span>Remaining: ₦{remainingBudget.toLocaleString()}</span>
                                 </div>
-                                <div className="h-4 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                                <div className="h-4 bg-emerald-800 rounded-full overflow-hidden border border-emerald-700">
                                     <div
                                         className={`h-full transition-all duration-500 ease-out ${progressPercent > 90 ? 'bg-red-500' : 'bg-linear-to-r from-emerald-400 to-emerald-600'
                                             }`}
@@ -150,7 +151,7 @@ export default function Market() {
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
                                     className={`px-5 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 ${selectedCategory === cat
-                                        ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                                        ? 'bg-emerald-900 text-white border-emerald-900 shadow-md'
                                         : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
                                         }`}
                                 >
@@ -181,14 +182,12 @@ export default function Market() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                         {filteredFoods.map(item => {
                             const qty = cart[item.id] || 0;
-                            const isAffordable = remainingBudget >= item.price;
-                            const isMaxed = !isAffordable && qty === 0;
+                            // const isAffordable = remainingBudget >= item.price; // No longer needed for disabled state
 
                             return (
                                 <div
                                     key={item.id}
-                                    className={`bg-white rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col group ${isMaxed ? 'opacity-60 grayscale-[0.5]' : 'hover:shadow-xl hover:shadow-emerald-500/10 border-slate-100 hover:border-emerald-500/30'
-                                        }`}
+                                    className="bg-white rounded-3xl border border-slate-100 hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 overflow-hidden flex flex-col group"
                                 >
                                     <div className="h-40 sm:h-48 bg-slate-100 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
                                         {item.image ? (
@@ -213,17 +212,9 @@ export default function Market() {
                                             {qty === 0 ? (
                                                 <button
                                                     onClick={() => handleAddToCart(item)}
-                                                    disabled={!isAffordable}
-                                                    className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAffordable
-                                                        ? 'bg-slate-900 text-white hover:bg-emerald-600 active:scale-95'
-                                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                                        }`}
+                                                    className="w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95 shadow-md shadow-emerald-200"
                                                 >
-                                                    {isAffordable ? (
-                                                        <>Add to Cart <Plus size={16} /></>
-                                                    ) : (
-                                                        <>Too Expensive</>
-                                                    )}
+                                                    Add to Cart <Plus size={16} />
                                                 </button>
                                             ) : (
                                                 <div className="flex items-center justify-between bg-emerald-50 rounded-xl p-1 border border-emerald-100">
@@ -236,11 +227,7 @@ export default function Market() {
                                                     <span className="font-black text-emerald-800 text-lg">{qty}</span>
                                                     <button
                                                         onClick={() => handleAddToCart(item)}
-                                                        disabled={!isAffordable}
-                                                        className={`w-10 h-10 flex items-center justify-center rounded-lg shadow-sm transition-all font-bold text-lg ${isAffordable
-                                                            ? 'bg-emerald-600 text-white hover:bg-emerald-500 active:scale-90'
-                                                            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                                                            }`}
+                                                        className="w-10 h-10 flex items-center justify-center rounded-lg shadow-sm transition-all font-bold text-lg bg-emerald-600 text-white hover:bg-emerald-700 active:scale-90"
                                                     >
                                                         +
                                                     </button>
