@@ -196,7 +196,7 @@ export default function User() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': user._id
+                    // 'user-id': user._id // Removed to avoid CORS issues if not required/allowed by backend
                 },
                 body: JSON.stringify({
                     email: user.email,
