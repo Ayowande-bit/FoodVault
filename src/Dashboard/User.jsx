@@ -192,7 +192,7 @@ export default function User() {
 
         try {
             // Call initialize payment endpoint
-            const res = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
+            const res = await fetch('https://foodvault-36sx.onrender.com/api/v1/payments/initialize', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
