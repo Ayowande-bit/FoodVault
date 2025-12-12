@@ -192,11 +192,11 @@ export default function User() {
 
         try {
             // Call initialize payment endpoint
-            const res = await fetch('https://foodvault-36sx.onrender.com/api/v1/payments/initialize', {
+            const res = await fetch('https://foodvault-36sx.onrender.com/payments/initialize', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'user-id': user._id // Removed to avoid CORS issues if not required/allowed by backend
+                    'user-id': user._id
                 },
                 body: JSON.stringify({
                     email: user.email,
