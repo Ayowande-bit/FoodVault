@@ -86,14 +86,13 @@ export default function Log() {
         setIsLoading(false);
         setShowSuccess(true);
 
+        // Clear any old session data to prevent leakage
+        localStorage.removeItem('plans');
+        localStorage.removeItem('transactions');
+
         // Store token if provided
         if (data.token) {
           localStorage.setItem('authToken', data.token);
-        }
-
-        // Save user data if available (handling different API responses)
-        if (data.data || data.user) {
-          localStorage.setItem('user', JSON.stringify(data.data || data.user));
         }
 
         // Redirect to dashboard after 2 seconds

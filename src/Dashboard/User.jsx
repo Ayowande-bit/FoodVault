@@ -65,7 +65,9 @@ export default function User() {
                 });
 
             const savedTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-            setTransactions(savedTransactions);
+            // Filter transactions for safe measure
+            // setTransactions(savedTransactions); 
+            setTransactions([]); // Safest to start empty until we verify ownership or API loads it
         } catch {
             window.location.href = '/sign';
         }
@@ -231,6 +233,10 @@ export default function User() {
     const handleLogout = () => {
         if (window.confirm('Are you sure you want to logout?')) {
             localStorage.removeItem('user');
+            localStorage.removeItem('plans');
+            localStorage.removeItem('transactions');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('token');
             window.location.href = '/sign';
         }
     };

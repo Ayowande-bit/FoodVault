@@ -39,6 +39,10 @@ export default function Sign() {
       }
 
       if (data.data) {
+        // Clear old data
+        localStorage.removeItem('plans');
+        localStorage.removeItem('transactions');
+
         localStorage.setItem("user", JSON.stringify(data.data)); // Save the user object
         localStorage.setItem("token", data.token); // Save the token too
       } else {
