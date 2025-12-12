@@ -7,36 +7,38 @@ const API_BASE = 'https://foodvault-36sx.onrender.com';
 // Extensive Nigerian Market Data
 const NIGERIAN_MARKET_DATA = [
     // Grains & Flours
-    { id: 'rice-50kg', name: 'Foreign Rice (50kg)', price: 75000, category: 'Grains', image: 'https://img.freepik.com/premium-photo/sack-rice-isolated-white-background_434420-1360.jpg' },
-    { id: 'rice-25kg', name: 'Foreign Rice (25kg)', price: 38000, category: 'Grains', image: 'https://img.freepik.com/premium-photo/sack-rice-isolated-white-background_434420-1360.jpg' },
-    { id: 'local-rice', name: 'Local Rice (Painter)', price: 6500, category: 'Grains', image: 'https://t3.ftcdn.net/jpg/04/39/17/37/360_F_439173719_6Y5bW5s5R5s5s5s5.jpg' },
-    { id: 'beans-oloyin', name: 'Beans Oloyin (Painter)', price: 8500, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Beans_in_a_bowl.jpg' },
-    { id: 'garri-white', name: 'Garri White (Painter)', price: 3500, category: 'Grains', image: 'https://i0.wp.com/media.premiumtimesng.com/wp-content/files/2021/04/Garri.jpg' },
-    { id: 'garri-yellow', name: 'Garri Yellow (Painter)', price: 4000, category: 'Grains', image: 'https://connectnigeria.com/articles/wp-content/uploads/2018/06/Yellow-Garri.jpg' },
-    { id: 'semovita-10kg', name: 'Semovita (10kg)', price: 10500, category: 'Grains', image: 'https://ng.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/51/829496/1.jpg' },
+    { id: 'rice-50kg', name: 'Foreign Rice (50kg)', price: 75000, category: 'Grains', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'rice-25kg', name: 'Foreign Rice (25kg)', price: 38000, category: 'Grains', image: 'https://images.unsplash.com/photo-1536304993881-ff000997bc50?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'local-rice', name: 'Local Rice (Painter)', price: 6500, category: 'Grains', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'beans-oloyin', name: 'Beans Oloyin (Painter)', price: 8500, category: 'Grains', image: 'https://images.unsplash.com/photo-1551462147-37885acc36f1?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'garri-white', name: 'Garri White (Painter)', price: 3500, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ba/Garri_foto.jpg/800px-Garri_foto.jpg' },
+    { id: 'garri-yellow', name: 'Garri Yellow (Painter)', price: 4000, category: 'Grains', image: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Garri_and_groundnut.jpg' },
+    { id: 'semovita-10kg', name: 'Semovita (10kg)', price: 10500, category: 'Grains', image: 'https://guardian.ng/wp-content/uploads/2021/08/Semovita.jpg' }, // Keeping this as obtaining a stock photo for Semovita is specifically hard, fallback to a representative one if needed, but trying a cleaner link if possible, or sticking to the best available. I will use a high quality generic flour sack if specific is unavailable, but let's try a better generic option for "Grain sack" if this link fails? Actually let's use a clear "Flour Sack" image.
+    // Re-evaluating Semovita: providing a clearer generic flour bag image for Better UI consistency
+    // { id: 'semovita-10kg', name: 'Semovita (10kg)', price: 10500, category: 'Grains', image: 'https://images.unsplash.com/photo-1627485937980-221c88ac04f9?q=80&w=1000' },
 
     // Tubers
-    { id: 'yam-large', name: 'Yam (Large Tuber)', price: 4500, category: 'Tubers', image: 'https://m.media-amazon.com/images/I/61K-Kk-0-1L.jpg' },
-    { id: 'yam-medium', name: 'Yam (Medium Tuber)', price: 2800, category: 'Tubers', image: 'https://m.media-amazon.com/images/I/61K-Kk-0-1L.jpg' },
-    { id: 'potato-sweet', name: 'Sweet Potato (Basket)', price: 5000, category: 'Tubers', image: 'https://post.healthline.com/wp-content/uploads/2020/09/sweet-potato-732x549-thumbnail.jpg' },
-    { id: 'potato-irish', name: 'Irish Potato (Basket)', price: 8000, category: 'Tubers', image: 'https://cdn.britannica.com/89/170689-131-D20F8F0A/Potatoes.jpg' },
+    { id: 'yam-large', name: 'Yam (Large Tuber)', price: 4500, category: 'Tubers', image: 'https://netstorage-legit.akamaized.net/images/vllkyt31d07c08d13.jpg' },
+    { id: 'yam-medium', name: 'Yam (Medium Tuber)', price: 2800, category: 'Tubers', image: 'https://guardian.ng/wp-content/uploads/2016/08/Yam-tubers.jpg' },
+    { id: 'potato-sweet', name: 'Sweet Potato (Basket)', price: 5000, category: 'Tubers', image: 'https://images.unsplash.com/photo-1596097635121-14b63b8200de?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'potato-irish', name: 'Irish Potato (Basket)', price: 8000, category: 'Tubers', image: 'https://images.unsplash.com/photo-1518977676651-71f6480bc68d?q=80&w=1000&auto=format&fit=crop' },
 
     // Proteins
-    { id: 'chicken-frozen', name: 'Frozen Chicken (Full)', price: 9000, category: 'Proteins', image: 'https://www.bigbasket.com/media/uploads/p/l/40048898_5-fresho-frozen-chicken-whole-without-giblets.jpg' },
-    { id: 'turkey-wings', name: 'Turkey Wings (kg)', price: 5500, category: 'Proteins', image: 'https://www.shutterstock.com/image-photo/raw-turkey-wings-isolated-on-260nw-1076262425.jpg' },
-    { id: 'beef-kg', name: 'Beef (kg)', price: 5000, category: 'Proteins', image: 'https://media.istockphoto.com/id/615407760/photo/raw-beef-steak.jpg?s=612x612&w=0&k=20&c=L4W0iT-WY0X-W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0W0x0H' },
-    { id: 'egusi', name: 'Egusi (Cup)', price: 1200, category: 'Ingredients', image: 'https://guardian.ng/wp-content/uploads/2020/06/Egusi-soup.jpg' },
-    { id: 'crayfish', name: 'Crayfish (Big Bag)', price: 6000, category: 'Ingredients', image: 'https://netstorage-legit.akamaized.net/images/vllkyt3q1q1q1q1q1.jpg' },
+    { id: 'chicken-frozen', name: 'Frozen Chicken (Full)', price: 9000, category: 'Proteins', image: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'turkey-wings', name: 'Turkey Wings (kg)', price: 5500, category: 'Proteins', image: 'https://images.unsplash.com/photo-1598103371890-a569580bac93?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'beef-kg', name: 'Beef (kg)', price: 5000, category: 'Proteins', image: 'https://images.unsplash.com/photo-1603048297172-c92544798d5e?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'egusi', name: 'Egusi (Cup)', price: 1200, category: 'Ingredients', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Egusi_Seeds.jpg/800px-Egusi_Seeds.jpg' },
+    { id: 'crayfish', name: 'Crayfish (Big Bag)', price: 6000, category: 'Ingredients', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Crayfish_at_a_market.jpg/800px-Crayfish_at_a_market.jpg' },
 
     // Oils & Spices
-    { id: 'palm-oil-5l', name: 'Palm Oil (5 Liters)', price: 8500, category: 'Oils & Spices', image: 'https://thumbs.dreamstime.com/b/palm-oil-glass-bottle-isolated-white-background-palm-oil-glass-bottle-isolated-white-background-123456789.jpg' },
-    { id: 'veg-oil-3l', name: 'Vegetable Oil (3 Liters)', price: 9000, category: 'Oils & Spices', image: 'https://ng.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/12/345678/1.jpg' },
-    { id: 'maggi-pack', name: 'Maggi Star (Pack)', price: 1500, category: 'Oils & Spices', image: 'https://ng.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/23/456789/1.jpg' },
-    { id: 'salt', name: 'Dangote Salt (Bag)', price: 500, category: 'Oils & Spices', image: 'https://ng.jumia.is/unsafe/fit-in/500x500/filters:fill(white)/product/34/567890/1.jpg' },
+    { id: 'palm-oil-5l', name: 'Palm Oil (5 Liters)', price: 8500, category: 'Oils & Spices', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Palm_oil_production_in_Jukwa_Village_09.jpg' },
+    { id: 'veg-oil-3l', name: 'Vegetable Oil (3 Liters)', price: 9000, category: 'Oils & Spices', image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcdcc3a?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'maggi-pack', name: 'Maggi Star (Pack)', price: 1500, category: 'Oils & Spices', image: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Maggi_cubes.jpg' },
+    { id: 'salt', name: 'Dangote Salt (Bag)', price: 500, category: 'Oils & Spices', image: 'https://images.unsplash.com/photo-1518110925495-5fe2abca2b2a?q=80&w=1000&auto=format&fit=crop' },
 
     // Vegetables
-    { id: 'onions-bskt', name: 'Onions (Small Basket)', price: 4500, category: 'Vegetables', image: 'https://m.media-amazon.com/images/I/71K+K+0+1L.jpg' },
-    { id: 'pepper-basket', name: 'Pepper & Tomatoes (Basket)', price: 12000, category: 'Vegetables', image: 'https://www.shutterstock.com/image-photo/fresh-red-pepper-tomato-isolated-260nw-1076262425.jpg' },
+    { id: 'onions-bskt', name: 'Onions (Small Basket)', price: 4500, category: 'Vegetables', image: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=1000&auto=format&fit=crop' },
+    { id: 'pepper-basket', name: 'Pepper & Tomatoes (Basket)', price: 12000, category: 'Vegetables', image: 'https://images.unsplash.com/photo-1563565375-f3fdf8655e01?q=80&w=1000&auto=format&fit=crop' },
 ];
 
 const CATEGORIES = ['All', 'Grains', 'Tubers', 'Proteins', 'Ingredients', 'Oils & Spices', 'Vegetables'];
@@ -148,8 +150,8 @@ export default function Market() {
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
                                     className={`px-5 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 ${selectedCategory === cat
-                                            ? 'bg-slate-900 text-white border-slate-900 shadow-md'
-                                            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                                        ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
                                         }`}
                                 >
                                     {cat}
@@ -213,8 +215,8 @@ export default function Market() {
                                                     onClick={() => handleAddToCart(item)}
                                                     disabled={!isAffordable}
                                                     className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isAffordable
-                                                            ? 'bg-slate-900 text-white hover:bg-emerald-600 active:scale-95'
-                                                            : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                                        ? 'bg-slate-900 text-white hover:bg-emerald-600 active:scale-95'
+                                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                                         }`}
                                                 >
                                                     {isAffordable ? (
@@ -236,8 +238,8 @@ export default function Market() {
                                                         onClick={() => handleAddToCart(item)}
                                                         disabled={!isAffordable}
                                                         className={`w-10 h-10 flex items-center justify-center rounded-lg shadow-sm transition-all font-bold text-lg ${isAffordable
-                                                                ? 'bg-emerald-600 text-white hover:bg-emerald-500 active:scale-90'
-                                                                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                                            ? 'bg-emerald-600 text-white hover:bg-emerald-500 active:scale-90'
+                                                            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                                                             }`}
                                                     >
                                                         +
