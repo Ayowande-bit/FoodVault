@@ -330,13 +330,7 @@ export default function User() {
                         >
                             + New Savings Plan
                         </button>
-                        <button
-                            
-                            className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 md:px-6 md:py-3 rounded-2xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
-                        >
-                            <ShoppingBasket size={18} className="text-emerald-600" />
-                            <span className="hidden sm:inline">Market</span>
-                        </button>
+                       
                         <button
                             onClick={handleLogout}
                             className="bg-teal-700 hover:bg-green-800 text-slate-100 px-3 py-2.5 rounded-2xl text-sm font-semibold flex items-center gap-2 border"
