@@ -131,14 +131,7 @@ export default function User() {
     };
 
     // Food preference toggle
-    const handleFoodToggle = (food) => {
-        setCreatePlanForm(prev => ({
-            ...prev,
-            foodPreferences: prev.foodPreferences.includes(food)
-                ? prev.foodPreferences.filter(f => f !== food)
-                : [...prev.foodPreferences, food]
-        }));
-    };
+  
 
     // Create plan
     // Create plan
@@ -338,7 +331,7 @@ export default function User() {
                             + New Savings Plan
                         </button>
                         <button
-                            onClick={() => window.location.href = '/market'}
+                            
                             className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 md:px-6 md:py-3 rounded-2xl text-sm font-semibold shadow-sm transition-all flex items-center gap-2"
                         >
                             <ShoppingBasket size={18} className="text-emerald-600" />
@@ -743,6 +736,7 @@ export default function User() {
                                     >
                                         <option value="Weekly">Weekly</option>
                                         <option value="Monthly">Monthly</option>
+                                        <option value="Yearly">Weekly</option>
                                     </select>
                                 </div>
                                 <div>
@@ -823,24 +817,7 @@ export default function User() {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-600 mb-3">
-                                    Food preferences
-                                </label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {['Rice', 'Yam', 'Tomatoes', 'Vegetables', 'Beans', 'Palm Oil', 'Pepper', 'Eggs', 'Garri', 'Groundnut Oil', 'Onions', 'Fish'].map(food => (
-                                        <label key={food} className="flex items-center gap-2 cursor-pointer text-xs text-slate-500">
-                                            <input
-                                                type="checkbox"
-                                                checked={createPlanForm.foodPreferences.includes(food)}
-                                                onChange={() => handleFoodToggle(food)}
-                                                className="w-4 h-4 accent-emerald-800 rounded"
-                                            />
-                                            <span>{food}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
+                            
 
                             <div className="flex gap-3 pt-4">
                                 <button
@@ -952,7 +929,7 @@ export default function User() {
                             </p>
 
                             {addMoneyForm.paymentMethod === 'Transfer' && (
-                                <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl space-y-3">
+                                <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl space-y-3 hidden ">
                                     <h4 className="text-sm font-bold text-emerald-800 border-b border-emerald-200 pb-2">
                                         Bank Transfer Guidelines
                                     </h4>
@@ -963,7 +940,7 @@ export default function User() {
                                         </div>
                                         <div className="flex justify-between text-xs">
                                             <span className="text-slate-500">Account Number</span>
-                                            <span className="font-bold text-slate-700 font-mono text-sm">0123456789</span>
+                                            <span className="font-bold text-slate-700 font-mono text-sm"></span>
                                         </div>
                                         <div className="flex justify-between text-xs">
                                             <span className="text-slate-500">Account Name</span>
